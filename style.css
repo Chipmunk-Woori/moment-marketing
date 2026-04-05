@@ -939,23 +939,11 @@ img { max-width: 100%; display: block; }
   justify-content: flex-start;
 }
 
-.service-num-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.service-icon-top {
   margin-bottom: 16px;
 }
 
-.service-num {
-  font-family: var(--font-en);
-  font-size: 48px;
-  font-weight: 900;
-  color: #d0d0d0;
-  line-height: 1;
-  letter-spacing: -2px;
-}
-
-.service-icon img {
+.service-icon-top img {
   width: 52px;
   height: 52px;
   object-fit: contain;
