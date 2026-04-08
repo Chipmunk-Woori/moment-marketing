@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Compare — MOMENT</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px;
+      gap: 64px;
+    }
+
+    .compare-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    /* ── 비교 컨테이너 ── */
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      width: 100%;
+      max-width: 1100px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .option {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .option-label {
+      padding: 16px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ────────────────────────────────────
+       OPTION A: BLACK + RED
+    ──────────────────────────────────── */
+    .opt-a .option-label { color: #e03a2f; background: #111113; }
+
+    /* Hero preview */
+    .opt-a .hero-preview {
+      background: #0d0d0d;
+      padding: 48px 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+      overflow: hidden;
+    }
+    .opt-a .hero-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .opt-a .tagline { color: #e03a2f; font-size: 12px; font-family: 'Montserrat', sans-serif; margin-bottom: 16px; position: relative; z-index: 1; }
+    .opt-a .title-solid { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: #fff; line-height: 0.95; display: block; }
+    .opt-a .title-outline { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.45); line-height: 0.95; display: block; }
+    .opt-a .title-accent { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: #e03a2f; line-height: 0.95; display: block; }
+
+    /* Buttons */
+    .opt-a .btns { display: flex; gap: 12px; padding: 28px 40px; background: #111113; border-bottom: 1px solid rgba(255,255,255,0.07); flex-wrap: wrap; }
+    .opt-a .btn-p { padding: 11px 22px; border: 1px solid rgba(255,255,255,0.45); border-radius: 6px; font-size: 13px; color: #fff; font-family: 'Noto Sans KR', sans-serif; cursor: default; }
+    .opt-a .btn-s { padding: 11px 22px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; font-size: 13px; color: rgba(255,255,255,0.5); font-family: 'Noto Sans KR', sans-serif; cursor: default; }
+
+    /* Ticker */
+    .opt-a .ticker { padding: 14px 40px; background: #0d0d0d; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; color: rgba(255,255,255,0.5); display: flex; gap: 16px; align-items: center; }
+    .opt-a .ticker-sep { color: #e03a2f; font-size: 7px; }
+
+    /* Stats */
+    .opt-a .stats { display: grid; grid-template-columns: 1fr 1fr; background: #111113; }
+    .opt-a .stat { padding: 28px 32px; border-right: 1px solid rgba(255,255,255,0.07); border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .opt-a .stat:nth-child(2n) { border-right: none; }
+    .opt-a .stat:nth-child(3), .opt-a .stat:nth-child(4) { border-bottom: none; }
+    .opt-a .stat-num { font-family: 'Montserrat', sans-serif; font-size: 38px; font-weight: 900; color: #e03a2f; line-height: 1; }
+    .opt-a .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+
+    /* Service card preview */
+    .opt-a .cards { display: flex; gap: 10px; padding: 28px 40px; background: #0d0d0d; }
+    .opt-a .card { flex: 1; background: #111113; border-radius: 8px; padding: 20px; min-height: 110px; position: relative; overflow: hidden; }
+    .opt-a .card-num { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: rgba(255,255,255,0.07); }
+    .opt-a .card-title { font-size: 13px; font-weight: 700; color: #fff; margin-top: 6px; }
+    .opt-a .card-tag { display: inline-block; margin-top: 10px; font-size: 10px; border: 1px solid rgba(255,255,255,0.18); border-radius: 4px; padding: 2px 7px; color: rgba(255,255,255,0.45); font-family: 'Montserrat', sans-serif; }
+
+    /* Process */
+    .opt-a .process { display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.07); }
+    .opt-a .step { flex: 1; padding: 20px 24px; border-right: 1px solid rgba(255,255,255,0.07); background: #111113; }
+    .opt-a .step:last-child { border-right: none; }
+    .opt-a .step-num { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; color: #e03a2f; }
+    .opt-a .step-name { font-size: 12px; font-weight: 700; color: #fff; margin-top: 6px; }
+
+    /* ────────────────────────────────────
+       OPTION B: BLACK + AMBER/GOLD
+    ──────────────────────────────────── */
+    .opt-b .option-label { color: #D4991A; background: #111113; }
+
+    .opt-b .hero-preview {
+      background: #0d0d0d;
+      padding: 48px 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+      overflow: hidden;
+    }
+    .opt-b .hero-preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .opt-b .tagline { color: #D4991A; font-size: 12px; font-family: 'Montserrat', sans-serif; margin-bottom: 16px; position: relative; z-index: 1; }
+    .opt-b .title-solid { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: #fff; line-height: 0.95; display: block; }
+    .opt-b .title-outline { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.45); line-height: 0.95; display: block; }
+    .opt-b .title-accent { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 900; color: #D4991A; line-height: 0.95; display: block; }
+
+    .opt-b .btns { display: flex; gap: 12px; padding: 28px 40px; background: #111113; border-bottom: 1px solid rgba(255,255,255,0.07); flex-wrap: wrap; }
+    .opt-b .btn-p { padding: 11px 22px; border: 1px solid rgba(255,255,255,0.45); border-radius: 6px; font-size: 13px; color: #fff; font-family: 'Noto Sans KR', sans-serif; cursor: default; }
+    .opt-b .btn-s { padding: 11px 22px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; font-size: 13px; color: rgba(255,255,255,0.5); font-family: 'Noto Sans KR', sans-serif; cursor: default; }
+
+    .opt-b .ticker { padding: 14px 40px; background: #0d0d0d; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; color: rgba(255,255,255,0.5); display: flex; gap: 16px; align-items: center; }
+    .opt-b .ticker-sep { color: #D4991A; font-size: 7px; }
+
+    .opt-b .stats { display: grid; grid-template-columns: 1fr 1fr; background: #111113; }
+    .opt-b .stat { padding: 28px 32px; border-right: 1px solid rgba(255,255,255,0.07); border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .opt-b .stat:nth-child(2n) { border-right: none; }
+    .opt-b .stat:nth-child(3), .opt-b .stat:nth-child(4) { border-bottom: none; }
+    .opt-b .stat-num { font-family: 'Montserrat', sans-serif; font-size: 38px; font-weight: 900; color: #D4991A; line-height: 1; }
+    .opt-b .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+
+    .opt-b .cards { display: flex; gap: 10px; padding: 28px 40px; background: #0d0d0d; }
+    .opt-b .card { flex: 1; background: #111113; border-radius: 8px; padding: 20px; min-height: 110px; }
+    .opt-b .card-num { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: rgba(255,255,255,0.07); }
+    .opt-b .card-title { font-size: 13px; font-weight: 700; color: #fff; margin-top: 6px; }
+    .opt-b .card-tag { display: inline-block; margin-top: 10px; font-size: 10px; border: 1px solid rgba(255,255,255,0.18); border-radius: 4px; padding: 2px 7px; color: rgba(255,255,255,0.45); font-family: 'Montserrat', sans-serif; }
+
+    .opt-b .process { display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,0.07); }
+    .opt-b .step { flex: 1; padding: 20px 24px; border-right: 1px solid rgba(255,255,255,0.07); background: #111113; }
+    .opt-b .step:last-child { border-right: none; }
+    .opt-b .step-num { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; color: #D4991A; }
+    .opt-b .step-name { font-size: 12px; font-weight: 700; color: #fff; margin-top: 6px; }
+
+    .divider {
+      width: 2px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .note {
+      max-width: 1100px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .note-card {
+      background: #111113;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 28px 32px;
+    }
+
+    .note-card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .note-card.red h3 { color: #e03a2f; }
+    .note-card.amber h3 { color: #D4991A; }
+
+    .note-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .note-card ul li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .note-card.red ul li::before { content: '◆'; position: absolute; left: 0; font-size: 6px; color: #e03a2f; top: 5px; }
+    .note-card.amber ul li::before { content: '◆'; position: absolute; left: 0; font-size: 6px; color: #D4991A; top: 5px; }
+  </style>
+</head>
+<body>
+  <div class="compare-label">Color Scheme Comparison</div>
+  <h1>MOMENT — Brand Color Preview</h1>
+
+  <div class="compare-row">
+    <!-- OPTION A: RED -->
+    <div class="option opt-a">
+      <div class="option-label">Option A — Black + Red (#e03a2f)</div>
+
+      <div class="hero-preview">
+        <p class="tagline">→ 브랜드의 다음 챕터를 씁니다</p>
+        <span class="title-solid">MAKE</span>
+        <span class="title-outline">BRANDS</span>
+        <span class="title-accent">MATTER.</span>
+      </div>
+
+      <div class="btns">
+        <div class="btn-p">프로젝트 시작하기 →</div>
+        <div class="btn-s">포트폴리오 보기</div>
+      </div>
+
+      <div class="ticker">
+        <span>브랜드 전략</span><span class="ticker-sep">◆</span>
+        <span>퍼포먼스 마케팅</span><span class="ticker-sep">◆</span>
+        <span>SEO 최적화</span><span class="ticker-sep">◆</span>
+        <span>데이터 분석</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num">320<small style="font-size:0.6em">+</small></div><div class="stat-lbl">성공 프로젝트</div></div>
+        <div class="stat"><div class="stat-num">12<small style="font-size:0.6em">년</small></div><div class="stat-lbl">업력</div></div>
+        <div class="stat"><div class="stat-num">4.8<small style="font-size:0.6em">×</small></div><div class="stat-lbl">평균 ROAS</div></div>
+        <div class="stat"><div class="stat-num">98<small style="font-size:0.6em">%</small></div><div class="stat-lbl">고객 재계약률</div></div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-num">01</div><div class="card-title">브랜드 전략</div><div class="card-tag">포지셔닝</div></div>
+        <div class="card"><div class="card-num">02</div><div class="card-title">퍼포먼스</div><div class="card-tag">META ADS</div></div>
+        <div class="card"><div class="card-num">03</div><div class="card-title">SNS 운영</div><div class="card-tag">INSTAGRAM</div></div>
+      </div>
+
+      <div class="process">
+        <div class="step"><div class="step-num">01</div><div class="step-name">Discovery</div></div>
+        <div class="step"><div class="step-num">02</div><div class="step-name">Strategy</div></div>
+        <div class="step"><div class="step-num">03</div><div class="step-name">Execute</div></div>
+        <div class="step"><div class="step-num">04</div><div class="step-name">Optimize</div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OPTION B: AMBER -->
+    <div class="option opt-b">
+      <div class="option-label">Option B — Black + Amber (#D4991A)</div>
+
+      <div class="hero-preview">
+        <p class="tagline">→ 브랜드의 다음 챕터를 씁니다</p>
+        <span class="title-solid">MAKE</span>
+        <span class="title-outline">BRANDS</span>
+        <span class="title-accent">MATTER.</span>
+      </div>
+
+      <div class="btns">
+        <div class="btn-p">프로젝트 시작하기 →</div>
+        <div class="btn-s">포트폴리오 보기</div>
+      </div>
+
+      <div class="ticker">
+        <span>브랜드 전략</span><span class="ticker-sep">◆</span>
+        <span>퍼포먼스 마케팅</span><span class="ticker-sep">◆</span>
+        <span>SEO 최적화</span><span class="ticker-sep">◆</span>
+        <span>데이터 분석</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-num">320<small style="font-size:0.6em">+</small></div><div class="stat-lbl">성공 프로젝트</div></div>
+        <div class="stat"><div class="stat-num">12<small style="font-size:0.6em">년</small></div><div class="stat-lbl">업력</div></div>
+        <div class="stat"><div class="stat-num">4.8<small style="font-size:0.6em">×</small></div><div class="stat-lbl">평균 ROAS</div></div>
+        <div class="stat"><div class="stat-num">98<small style="font-size:0.6em">%</small></div><div class="stat-lbl">고객 재계약률</div></div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-num">01</div><div class="card-title">브랜드 전략</div><div class="card-tag">포지셔닝</div></div>
+        <div class="card"><div class="card-num">02</div><div class="card-title">퍼포먼스</div><div class="card-tag">META ADS</div></div>
+        <div class="card"><div class="card-num">03</div><div class="card-title">SNS 운영</div><div class="card-tag">INSTAGRAM</div></div>
+      </div>
+
+      <div class="process">
+        <div class="step"><div class="step-num">01</div><div class="step-name">Discovery</div></div>
+        <div class="step"><div class="step-num">02</div><div class="step-name">Strategy</div></div>
+        <div class="step"><div class="step-num">03</div><div class="step-name">Execute</div></div>
+        <div class="step"><div class="step-num">04</div><div class="step-name">Optimize</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 특징 설명 -->
+  <div class="note">
+    <div class="note-card red">
+      <h3>Option A — Red</h3>
+      <ul>
+        <li>즉각적인 행동 유발 — CTA 전환율에 유리</li>
+        <li>에너지·열정·결과 연상 → 크리에이티브 에이전시 느낌</li>
+        <li>강렬하고 기억에 남는 첫인상</li>
+        <li>스타트업·중소기업 클라이언트에게 친근</li>
+        <li>TBWA, 제일기획 계열의 색상 코드</li>
+      </ul>
+    </div>
+    <div class="note-card amber">
+      <h3>Option B — Amber / Gold</h3>
+      <ul>
+        <li>프리미엄·신뢰·성공 연상 → 고단가 서비스에 적합</li>
+        <li>경쟁 대행사와 확실한 차별화</li>
+        <li>대기업·럭셔리 브랜드 클라이언트에게 신뢰감</li>
+        <li>검정 바탕과 황금색 = 강한 고급 이미지</li>
+        <li>시간이 지나도 트렌드를 타지 않는 내구성</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

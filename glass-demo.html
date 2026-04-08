@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MOMENT — Glass Effect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;900&family=Cormorant+Garamond:wght@300&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── 딥 다크 배경 ── */
+    body {
+      background: #06060e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* ── 상단 스포트라이트 ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120vw;
+      height: 80vh;
+      background: radial-gradient(
+        ellipse 60% 60% at 50% 0%,
+        rgba(255,255,255,0.055) 0%,
+        rgba(200,210,255,0.025) 40%,
+        transparent 75%
+      );
+      pointer-events: none;
+    }
+
+    /* ── 그레인 노이즈 (고급 텍스처) ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    /* ── 무대 ── */
+    .stage {
+      position: relative;
+      z-index: 1;
+      user-select: none;
+      padding: 0 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    /* ── 부제 ── */
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(13px, 1.6vw, 17px);
+      font-weight: 300;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    /* ── 얇은 구분선 ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), transparent);
+      margin-bottom: 10px;
+    }
+
+    /* ── 글자 행 ── */
+    .glass-row {
+      display: flex;
+      align-items: flex-end;
+      line-height: 1;
+    }
+
+    /* ── 반사 행 ── */
+    .glass-row.reflection {
+      transform: scaleY(-1);
+      margin-top: -8px;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 55%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, transparent 55%);
+      filter: blur(1.5px);
+      pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════
+       유리 글자 — 크리스탈/크롬 스타일
+    ═══════════════════════════════════════ */
+    .gl {
+      font-size: clamp(88px, 17vw, 220px);
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 1;
+      display: inline-block;
+      position: relative;
+
+      /* 크리스탈 그라디언트: 강한 명암 대비 */
+      background: linear-gradient(
+        132deg,
+        #ffffff  0%,
+        #f0f0f0  6%,
+        #c8c8c8 13%,
+        #ffffff 21%,
+        #909090 29%,
+        #e8e8e8 36%,
+        #ffffff 43%,
+        #b0b0b0 51%,
+        #f5f5f5 58%,
+        #707070 66%,
+        #ffffff 73%,
+        #d0d0d0 82%,
+        #ffffff 100%
+      );
+      background-size: 350% 350%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: crystalShimmer 9s ease-in-out infinite;
+
+      /* 입체 두께 — 어두운 배경이라 더 선명 */
+      filter:
+        drop-shadow(0  1px 0  rgba(255,255,255,0.70))
+        drop-shadow(0  3px 0  rgba(200,200,200,0.50))
+        drop-shadow(0  5px 0  rgba(140,140,140,0.35))
+        drop-shadow(0  8px 0  rgba( 70, 70, 70,0.30))
+        drop-shadow(0 11px 0  rgba( 30, 30, 30,0.25))
+        drop-shadow(0 16px 32px rgba(0,0,0,0.70))
+        drop-shadow(-1px -1px 0 rgba(255,255,255,0.55));
+    }
+
+    /* 흰빛 엣지 테두리 */
+    .gl::before {
+      content: attr(data-l);
+      position: absolute;
+      inset: 0;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      -webkit-text-stroke: 2px rgba(255,255,255,0.55);
+      color: transparent;
+      pointer-events: none;
+    }
+
+    /* 빛 스트릭 */
+    .gl::after {
+      content: attr(data-l);
+      position: absolute;
+      inset: 0;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      background: linear-gradient(
+        108deg,
+        transparent       20%,
+        rgba(255,255,255,0) 38%,
+        rgba(255,255,255,1) 48%,
+        rgba(240,245,255,0.7) 51%,
+        rgba(255,255,255,0) 60%,
+        transparent       75%
+      );
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: sweepLight 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* ── 키프레임 ── */
+    @keyframes crystalShimmer {
+      0%   { background-position:   0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position:   0% 50%; }
+    }
+
+    @keyframes sweepLight {
+      0%   { background-position: 240% 0; }
+      65%  { background-position: -60% 0; }
+      100% { background-position: -60% 0; }
+    }
+
+    /* ── 글자별 3D 변형 + 타이밍 ── */
+    .gl-M  {
+      transform: perspective(550px) rotateX(-13deg) rotateY(20deg) rotateZ(-4deg) translateY(-7px);
+      animation-delay:  0.0s;
+    }
+    .gl-M::after  { animation-delay:  0.0s; }
+
+    .gl-O  {
+      transform: perspective(550px) rotateX( 9deg) rotateY(-17deg) rotateZ( 6deg) translateY( 5px);
+      animation-delay: -1.5s;
+    }
+    .gl-O::after  { animation-delay: -1.0s; }
+
+    .gl-M2 {
+      transform: perspective(550px) rotateX(-6deg) rotateY( 12deg) rotateZ(-3deg) translateY(-4px);
+      animation-delay: -3.0s;
+    }
+    .gl-M2::after { animation-delay: -2.0s; }
+
+    .gl-E  {
+      transform: perspective(550px) rotateX(11deg) rotateY(-20deg) rotateZ( 5deg) translateY( 6px);
+      animation-delay: -4.5s;
+    }
+    .gl-E::after  { animation-delay: -3.0s; }
+
+    .gl-N  {
+      transform: perspective(550px) rotateX(-8deg) rotateY( 14deg) rotateZ(-5deg) translateY(-5px);
+      animation-delay: -6.0s;
+    }
+    .gl-N::after  { animation-delay: -4.0s; }
+
+    .gl-T  {
+      transform: perspective(550px) rotateX( 6deg) rotateY(-10deg) rotateZ( 3deg) translateY( 3px);
+      animation-delay: -7.5s;
+    }
+    .gl-T::after  { animation-delay: -5.0s; }
+
+    /* ── 호버 ── */
+    .gl:hover {
+      filter:
+        drop-shadow(0  1px 0  rgba(255,255,255,0.95))
+        drop-shadow(0  3px 0  rgba(220,220,220,0.75))
+        drop-shadow(0  6px 0  rgba(160,160,160,0.55))
+        drop-shadow(0 10px 0  rgba( 80, 80, 80,0.40))
+        drop-shadow(0 14px 0  rgba( 30, 30, 30,0.30))
+        drop-shadow(0 22px 40px rgba(0,0,0,0.85))
+        drop-shadow(-2px -2px 0 rgba(255,255,255,0.80));
+      transition: filter 0.4s ease;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <p class="subtitle">Creative Performance Agency</p>
+    <div class="divider"></div>
+
+    <!-- 메인 글자 -->
+    <div class="glass-row">
+      <span class="gl gl-M"  data-l="M">M</span>
+      <span class="gl gl-O"  data-l="O">O</span>
+      <span class="gl gl-M2" data-l="M">M</span>
+      <span class="gl gl-E"  data-l="E">E</span>
+      <span class="gl gl-N"  data-l="N">N</span>
+      <span class="gl gl-T"  data-l="T">T</span>
+    </div>
+
+    <!-- 바닥 반사 -->
+    <div class="glass-row reflection" aria-hidden="true">
+      <span class="gl gl-M"  data-l="M">M</span>
+      <span class="gl gl-O"  data-l="O">O</span>
+      <span class="gl gl-M2" data-l="M">M</span>
+      <span class="gl gl-E"  data-l="E">E</span>
+      <span class="gl gl-N"  data-l="N">N</span>
+      <span class="gl gl-T"  data-l="T">T</span>
+    </div>
+  </div>
+</body>
+</html>
